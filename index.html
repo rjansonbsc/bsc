@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <title>Byron Connect (PWA)</title>
+
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="icon" href="/icons/icon-192.png" />
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0;display:grid;place-items:center;min-height:100vh;background:#f6fafc}
+    .card{background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 8px 30px rgba(0,0,0,.08);text-align:center;width:min(640px,92vw)}
+    h1{margin:0 0 8px}
+    p{margin:0 0 16px;color:#334155}
+    button{border:0;border-radius:12px;padding:10px 16px;font-weight:600;cursor:pointer}
+    .primary{background:#0ea5e9;color:#fff}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Byron Connect</h1>
+    <p>Installable demo PWA on Azure Static Web Apps.</p>
+    <p><small>Offline ready once cached by the service worker.</small></p>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button class="primary" id="installBtn" hidden>Install app</button>
+      <button onclick="location.reload()">Check for updates</button>
+    </div>
+  </main>
+
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+    }
+
+    // Basic install prompt
+    let deferred;
+    const btn = document.getElementById('installBtn');
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); deferred = e; btn.hidden = false;
+    });
+    btn?.addEventListener('click', async () => {
+      btn.hidden = true; await deferred.prompt(); deferred = null;
+    });
+  </script>
+</body>
+</html>
